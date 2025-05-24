@@ -17,3 +17,5 @@ services:
       dockerfile: dockerfile
     volumes:
       - ./php:/var/www/html
+    environment:
+      - FLAG=LINH{c0git0 3rgo Sum}
