@@ -1,0 +1,19 @@
+services:
+  nodejs:
+    container_name: nodejs
+    build:
+      context: ./node
+      dockerfile: dockerfile
+    ports:
+      - "30000:3000"
+    volumes:
+      - ./node:/app
+      - /app/node_modules
+
+  php:
+    container_name: php
+    build:
+      context: ./php
+      dockerfile: dockerfile
+    volumes:
+      - ./php:/var/www/html
