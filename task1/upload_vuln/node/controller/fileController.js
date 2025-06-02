@@ -14,6 +14,13 @@ const BLOCKED_MIME_TYPES = [
   'application/x-executable',
   'application/x-msdownload'
 ];
+const DANGEROUS_EXT = [
+    '.php', '.phtml', '.php3', '.php4', '.php5', '.phps','phar',
+    '.asp', '.aspx', '.jsp', '.jspx', '.sh', '.cgi',
+    '.exe', '.bat', '.cmd', '.com', '.vbs', '.vbe',
+    '.wsf', '.wsh', '.ps1', '.psm1', '.py', '.pl', '.rb',
+    '.jar', '.class', '.dll', '.scr', '.msi'
+];
 
 const storage = multer.diskStorage({
     destination: 'temp/',
@@ -24,21 +31,13 @@ const storage = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
     const filename = file.originalname.toLowerCase();
+    // const ext = path.extname(filename).toLowerCase();
     const parts = filename.split('.');
-    log(parts[0]==='');
     const ext = parts.length > 1 ? '.' + parts[1] : '';
 
     const mime = file.mimetype.toLowerCase();
 
-    const dangerous = [
-        '.php', '.phtml', '.php3', '.php4', '.php5', '.phps','phar',
-        '.asp', '.aspx', '.jsp', '.jspx', '.sh', '.cgi',
-        '.exe', '.bat', '.cmd', '.com', '.vbs', '.vbe',
-        '.wsf', '.wsh', '.ps1', '.psm1', '.py', '.pl', '.rb',
-        '.jar', '.class', '.dll', '.scr', '.msi'
-    ];
-
-    if (dangerous.includes(ext)) {
+    if (DANGEROUS_EXT.includes(ext)) {
         return cb(new Error(`❌ Extension ${ext} is blocked.`));
     }
     if (parts[0] === '' || parts[0].length > 100) {

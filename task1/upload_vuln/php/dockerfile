@@ -5,17 +5,23 @@ RUN apt-get update && apt-get install -y \
     zip unzip git curl libzip-dev libpng-dev libonig-dev libxml2-dev \
     && docker-php-ext-install pdo pdo_mysql mbstring zip xml gd \
     && pecl install xdebug-3.2.0 && docker-php-ext-enable xdebug \
-    && docker-php-source delete
+    && docker-php-source delete \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Enable Apache rewrite module
 RUN a2enmod rewrite
 
-# Copy app code
+# Set working directory and copy app code
 WORKDIR /var/www/html
 COPY . /var/www/html/
 
-# Set permissions
+# Ensure check.sh is executable
+RUN chmod +x ./check.sh
+
+# Set correct ownership
 RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 80
-CMD ["apache2-foreground"]
+
+# Start both Apache and check.sh in background
+CMD ["sh", "-c", "./check.sh & apache2-foreground"]
